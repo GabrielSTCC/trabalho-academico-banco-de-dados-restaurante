@@ -2,7 +2,7 @@
 
 ## Antes de entregar
 
-1. Preencha seu nome em `docs/TRABALHO_BD.md` (campo _[seu nome]_).
+1. Preencha os nomes da equipe em `docs/TRABALHO_BD.md` e a divisão de tarefas em `docs/EQUIPE.md`.
 2. Exporte os diagramas oficiais (brModelo + Workbench) ou use prints de `docs/diagramas/visualizar.html`.
 3. Tire os prints listados abaixo.
 4. Compacte a pasta do projeto em `.zip`.
@@ -12,12 +12,19 @@
 ## Como rodar a demonstração
 
 ```powershell
-cd "c:\Users\gabri\Documents\Trabalho BD\restaurante\restaurante"
+git clone https://github.com/GabrielSTCC/trabalho-academico-banco-de-dados-restaurante.git
+cd trabalho-academico-banco-de-dados-restaurante
+
+copy config.example.php config.php
+# Edite config.php com sua senha do MySQL
+
 .\setup.ps1      # recria banco (se necessário)
 .\iniciar.ps1    # inicia servidor PHP
 ```
 
 Acesse: **http://localhost:8000**
+
+Guia completo para a equipe: [`docs/EQUIPE.md`](EQUIPE.md)
 
 ---
 
@@ -55,6 +62,7 @@ restaurante/
 ├── docs/
 │   ├── TRABALHO_BD.md
 │   ├── ENTREGA.md
+│   ├── EQUIPE.md
 │   └── diagramas/
 └── prints/                 (crie esta pasta com suas imagens)
 ```
@@ -76,11 +84,11 @@ restaurante/
 
 ## Checklist final
 
-- [ ] Nome preenchido no documento
+- [ ] Nomes da equipe preenchidos (`TRABALHO_BD.md` e `EQUIPE.md`)
 - [ ] Diagrama conceitual (PNG)
 - [ ] Diagrama lógico (PNG)
 - [ ] Scripts SQL incluídos
 - [ ] 3 prints de relatórios
 - [ ] 4 prints do CRUD
-- [ ] Pasta compactada (.zip)
+- [ ] Link do repositório: https://github.com/GabrielSTCC/trabalho-academico-banco-de-dados-restaurante
 - [ ] `config.php` **fora** do zip
