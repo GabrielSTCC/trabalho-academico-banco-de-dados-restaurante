@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagramas — Sistema Restaurante</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+            background: #fafafa;
+        }
+        h1 { color: #333; }
+        h2 {
+            color: #555;
+            margin-top: 48px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 8px;
+        }
+        .diagram {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 16px 0;
+            overflow-x: auto;
+        }
+        .note {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 4px;
+            padding: 12px 16px;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Diagramas — Sistema Restaurante</h1>
+
+<div class="note">
+    Use <strong>Ctrl+P</strong> ou captura de tela para exportar cada diagrama como PNG.
+    Para entrega oficial, exporte também do <strong>brModelo</strong> e do <strong>MySQL Workbench</strong>.
+</div>
+
+<h2>1. Diagrama Conceitual</h2>
+<div class="diagram">
+<pre class="mermaid">
+erDiagram
+    CLIENTE ||--o{ PEDIDO : realiza
+    MESA ||--o{ PEDIDO : recebe
+    PEDIDO ||--o{ ITEM_PEDIDO : contem
+    PRATO ||--o{ ITEM_PEDIDO : compoe
+
+    CLIENTE {
+        int id_cliente PK
+        string nome
+        string telefone
+        string email
+        date data_cadastro
+    }
+
+    MESA {
+        int id_mesa PK
+        int numero
+        int capacidade
+        string status
+    }
+
+    PRATO {
+        int id_prato PK
+        string nome
+        string categoria
+        decimal preco
+    }
+
+    PEDIDO {
+        int id_pedido PK
+        datetime data_pedido
+        string status
+    }
+
+    ITEM_PEDIDO {
+        int id_item PK
+        int quantidade
+        decimal subtotal
+    }
+</pre>
+</div>
+
+<h2>2. Diagrama Lógico</h2>
+<div class="diagram">
+<pre class="mermaid">
+erDiagram
+    Cliente ||--o{ Pedido : "id_cliente FK"
+    Mesa ||--o{ Pedido : "id_mesa FK"
+    Pedido ||--o{ Item_Pedido : "id_pedido FK"
+    Prato ||--o{ Item_Pedido : "id_prato FK"
+
+    Cliente {
+        INT id_cliente PK
+        VARCHAR nome
+        VARCHAR telefone
+        VARCHAR email
+        DATE data_cadastro
+    }
+
+    Mesa {
+        INT id_mesa PK
+        INT numero
+        INT capacidade
+        ENUM status
+    }
+
+    Prato {
+        INT id_prato PK
+        VARCHAR nome
+        VARCHAR categoria
+        DECIMAL preco
+    }
+
+    Pedido {
+        INT id_pedido PK
+        DATETIME data_pedido
+        INT id_cliente FK
+        INT id_mesa FK
+        ENUM status
+    }
+
+    Item_Pedido {
+        INT id_item PK
+        INT id_pedido FK
+        INT id_prato FK
+        INT quantidade
+        DECIMAL subtotal
+    }
+</pre>
+</div>
+
+<script>
+    mermaid.initialize({ startOnLoad: true, theme: 'default' });
+</script>
+
+</body>
+</html>
