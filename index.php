@@ -61,6 +61,30 @@ include 'includes/header.php';
         <p>Remover cliente sem pedidos vinculados</p>
     </a>
 
+    <a href="cadastrar_pedido.php" class="nav-card">
+        <div class="nav-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <line x1="12" y1="10" x2="12" y2="14"/>
+                <line x1="9" y1="12" x2="15" y2="12"/>
+            </svg>
+        </div>
+        <h3>Cadastrar Pedido</h3>
+        <p>Registrar pedido com cliente, mesa e pratos</p>
+    </a>
+
+    <a href="listar_pedidos.php" class="nav-card">
+        <div class="nav-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+                <line x1="8" y1="18" x2="21" y2="18"/>
+            </svg>
+        </div>
+        <h3>Listar Pedidos</h3>
+        <p>Visualizar pedidos e clientes vinculados</p>
+    </a>
+
     <a href="relatorios.php" class="nav-card">
         <div class="nav-card-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
