@@ -78,11 +78,10 @@ include 'includes/header.php';
                             —
                         <?php endif; ?>
                     </td>
-                    <td>
+                    <td class="acoes-cell">
+                        <a href="editar_pedido.php?id_pedido=<?= $linha['id_pedido'] ?>" class="btn btn-primary btn-sm">Editar</a>
                         <?php if ($linha['total_itens'] > 0): ?>
                             <a href="listar_itens_pedido.php?id_pedido=<?= $linha['id_pedido'] ?>" class="btn btn-secondary btn-sm">Ver itens</a>
-                        <?php else: ?>
-                            —
                         <?php endif; ?>
                     </td>
                 </tr>
@@ -94,6 +93,7 @@ include 'includes/header.php';
 
 <style>
 .btn-sm { padding: 0.375rem 0.625rem; font-size: 0.8125rem; }
+.acoes-cell { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 </style>
 
 <?php include 'includes/footer.php'; ?>

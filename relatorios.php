@@ -26,14 +26,26 @@ include 'includes/header.php';
 <!-- Relatório 1 -->
 <div class="card report-section">
     <div class="card-header">
-        <span class="card-title">1. Clientes com nome começando com "M"</span>
+        <span class="card-title">1. Lista de clientes com pesquisa por nome</span>
     </div>
     <div class="report-meta">
         <span class="badge badge-sql">WHERE</span>
         <span class="badge badge-sql">LIKE</span>
     </div>
+
+    <div class="report-search">
+        <div class="form-group">
+            <label for="busca-clientes">Pesquisar por nome</label>
+            <input type="text" id="busca-clientes" class="form-control"
+                   placeholder="Pesquisar por nome..." autocomplete="off">
+        </div>
+        <p class="sql-preview" id="sql-preview-clientes">
+            SELECT id_cliente, nome, telefone, email FROM Cliente ORDER BY nome
+        </p>
+    </div>
+
     <div class="table-wrapper">
-        <table class="table">
+        <table class="table" id="tabela-clientes">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -46,23 +58,71 @@ include 'includes/header.php';
             <?php
             $sql1 = "SELECT id_cliente, nome, telefone, email
                      FROM Cliente
-                     WHERE nome LIKE 'M%'
                      ORDER BY nome";
             $resultado1 = $conexao->query($sql1);
 
             while ($linha = $resultado1->fetch_assoc()):
+                $nomeFiltro = function_exists('mb_strtolower')
+                    ? mb_strtolower($linha['nome'], 'UTF-8')
+                    : strtolower($linha['nome']);
             ?>
-                <tr>
+                <tr class="cliente-row" data-nome="<?= htmlspecialchars($nomeFiltro) ?>">
                     <td><?= $linha['id_cliente'] ?></td>
                     <td><strong><?= htmlspecialchars($linha['nome']) ?></strong></td>
                     <td><?= htmlspecialchars($linha['telefone']) ?></td>
                     <td><?= htmlspecialchars($linha['email']) ?></td>
                 </tr>
             <?php endwhile; ?>
+                <tr id="clientes-sem-resultado" style="display: none;">
+                    <td colspan="4">Nenhum cliente encontrado.</td>
+                </tr>
             </tbody>
         </table>
     </div>
 </div>
+
+<style>
+.report-search { padding: 0 1rem 0.5rem; }
+.sql-preview {
+    font-family: 'Consolas', monospace;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    margin: 0;
+    padding: 0.5rem 0.75rem;
+    background: var(--color-bg);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+}
+</style>
+
+<script>
+(function () {
+    var input = document.getElementById('busca-clientes');
+    var preview = document.getElementById('sql-preview-clientes');
+    var rows = document.querySelectorAll('.cliente-row');
+    var semResultado = document.getElementById('clientes-sem-resultado');
+
+    input.addEventListener('input', function () {
+        var termo = this.value.trim().toLowerCase();
+        var visiveis = 0;
+
+        rows.forEach(function (row) {
+            var nome = row.getAttribute('data-nome') || '';
+            var exibir = termo === '' || nome.indexOf(termo) === 0;
+            row.style.display = exibir ? '' : 'none';
+            if (exibir) visiveis++;
+        });
+
+        if (termo === '') {
+            preview.textContent = 'SELECT id_cliente, nome, telefone, email FROM Cliente ORDER BY nome';
+        } else {
+            preview.textContent = "SELECT id_cliente, nome, telefone, email FROM Cliente WHERE nome LIKE '" + termo + "%' ORDER BY nome";
+        }
+
+        semResultado.style.display = visiveis === 0 ? '' : 'none';
+    });
+})();
+</script>
 
 <!-- Relatório 2 -->
 <div class="card report-section">

@@ -14,9 +14,9 @@ INSERT INTO Cliente (nome, telefone, email) VALUES
 
 INSERT INTO Mesa (numero, capacidade, status) VALUES
     (1, 2,  'livre'),
-    (2, 4,  'ocupada'),
-    (3, 4,  'livre'),
-    (4, 6,  'reservada'),
+    (2, 4,  'livre'),
+    (3, 4,  'ocupada'),
+    (4, 6,  'ocupada'),
     (5, 8,  'livre');
 
 INSERT INTO Prato (nome, categoria, preco) VALUES

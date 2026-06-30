@@ -309,6 +309,26 @@ a:hover {
     line-height: 1.4;
 }
 
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.chart-card {
+    padding-bottom: 1rem;
+}
+
+.chart-card canvas {
+    max-height: 280px;
+    padding: 0 1rem 1rem;
+}
+
+.chart-empty {
+    margin: 0 1rem 1rem;
+}
+
 /* Buttons */
 .btn {
     display: inline-flex;
@@ -580,6 +600,10 @@ input[type="number"].form-control::-webkit-inner-spin-button {
 
     .nav-grid {
         grid-template-columns: 1fr 1fr;
+    }
+
+    .charts-grid {
+        grid-template-columns: 1fr;
     }
 }
 

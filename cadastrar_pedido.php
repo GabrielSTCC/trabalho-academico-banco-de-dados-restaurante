@@ -1,5 +1,6 @@
 <?php
 include('conexao.php');
+require_once 'includes/mesa_sync.php';
 
 $pageTitle = 'Cadastrar Pedido';
 $currentPage = 'cadastrar_pedido';
@@ -97,6 +98,7 @@ if (isset($_POST['id_cliente']) && isset($_POST['id_mesa'])) {
 
             if (!$falhou) {
                 $conexao->commit();
+                sincronizarStatusMesa($conexao, $id_mesa, $status);
                 $sucesso = true;
                 $idPedidoCriado = $id_pedido;
                 $totalItensCadastrados = count($itensValidos);

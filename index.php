@@ -1,13 +1,84 @@
 <?php
+include('conexao.php');
+
 $pageTitle = 'Dashboard';
 $currentPage = 'index';
 $pageDescription = 'Painel de controle do sistema de gestão do restaurante';
+
+$itensLabels = [];
+$itensTotais = [];
+$clientesLabels = [];
+$clientesGastos = [];
+
+$sqlItens = "SELECT pr.nome, SUM(ip.quantidade) AS total
+             FROM Item_Pedido ip
+             INNER JOIN Prato pr ON pr.id_prato = ip.id_prato
+             INNER JOIN Pedido p ON p.id_pedido = ip.id_pedido
+             WHERE p.status != 'cancelado'
+             GROUP BY pr.id_prato, pr.nome
+             ORDER BY total DESC
+             LIMIT 5";
+
+$resultadoItens = $conexao->query($sqlItens);
+if ($resultadoItens) {
+    while ($linha = $resultadoItens->fetch_assoc()) {
+        $itensLabels[] = $linha['nome'];
+        $itensTotais[] = (int) $linha['total'];
+    }
+}
+
+$sqlClientes = "SELECT c.nome, SUM(ip.subtotal) AS total_gasto
+                FROM Cliente c
+                INNER JOIN Pedido p ON p.id_cliente = c.id_cliente
+                INNER JOIN Item_Pedido ip ON ip.id_pedido = p.id_pedido
+                WHERE p.status != 'cancelado'
+                GROUP BY c.id_cliente, c.nome
+                ORDER BY total_gasto DESC
+                LIMIT 5";
+
+$resultadoClientes = $conexao->query($sqlClientes);
+if ($resultadoClientes) {
+    while ($linha = $resultadoClientes->fetch_assoc()) {
+        $clientesLabels[] = $linha['nome'];
+        $clientesGastos[] = (float) $linha['total_gasto'];
+    }
+}
+
 include 'includes/header.php';
 ?>
 
 <div class="hero">
     <h2>Sistema Restaurante</h2>
     <p>Gestão de clientes, pedidos e relatórios SQL. Selecione uma opção abaixo para começar.</p>
+</div>
+
+<div class="page-header">
+    <h2>Indicadores</h2>
+    <p>Resumo dos itens e clientes com maior movimento</p>
+</div>
+
+<div class="charts-grid">
+    <div class="card chart-card">
+        <div class="card-header">
+            <span class="card-title">Itens mais pedidos</span>
+        </div>
+        <?php if (empty($itensLabels)): ?>
+            <div class="alert alert-info chart-empty">Sem dados para exibir.</div>
+        <?php else: ?>
+            <canvas id="chart-itens"></canvas>
+        <?php endif; ?>
+    </div>
+
+    <div class="card chart-card">
+        <div class="card-header">
+            <span class="card-title">Clientes que mais gastaram</span>
+        </div>
+        <?php if (empty($clientesLabels)): ?>
+            <div class="alert alert-info chart-empty">Sem dados para exibir.</div>
+        <?php else: ?>
+            <canvas id="chart-clientes"></canvas>
+        <?php endif; ?>
+    </div>
 </div>
 
 <div class="page-header">
@@ -85,6 +156,18 @@ include 'includes/header.php';
         <p>Visualizar pedidos e clientes vinculados</p>
     </a>
 
+    <a href="listar_mesas.php" class="nav-card">
+        <div class="nav-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="16" rx="2"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+                <line x1="9" y1="4" x2="9" y2="20"/>
+            </svg>
+        </div>
+        <h3>Listar Mesas</h3>
+        <p>Status, cliente e itens do pedido aberto</p>
+    </a>
+
     <a href="relatorios.php" class="nav-card">
         <div class="nav-card-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -97,5 +180,83 @@ include 'includes/header.php';
         <p>Consultas com WHERE, JOIN, COUNT, MIN e MAX</p>
     </a>
 </div>
+
+<?php if (!empty($itensLabels) || !empty($clientesLabels)): ?>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+(function () {
+    var corPrimaria = '#c2410c';
+    var corSecundaria = '#ea580c';
+
+    <?php if (!empty($itensLabels)): ?>
+    new Chart(document.getElementById('chart-itens'), {
+        type: 'bar',
+        data: {
+            labels: <?= json_encode($itensLabels, JSON_UNESCAPED_UNICODE) ?>,
+            datasets: [{
+                label: 'Quantidade',
+                data: <?= json_encode($itensTotais) ?>,
+                backgroundColor: corPrimaria,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 }
+                }
+            }
+        }
+    });
+    <?php endif; ?>
+
+    <?php if (!empty($clientesLabels)): ?>
+    new Chart(document.getElementById('chart-clientes'), {
+        type: 'bar',
+        data: {
+            labels: <?= json_encode($clientesLabels, JSON_UNESCAPED_UNICODE) ?>,
+            datasets: [{
+                label: 'Total gasto (R$)',
+                data: <?= json_encode($clientesGastos) ?>,
+                backgroundColor: corSecundaria,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function (ctx) {
+                            return 'R$ ' + ctx.parsed.y.toLocaleString('pt-BR', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            });
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function (value) {
+                            return 'R$ ' + value.toLocaleString('pt-BR');
+                        }
+                    }
+                }
+            }
+        }
+    });
+    <?php endif; ?>
+})();
+</script>
+<?php endif; ?>
 
 <?php include 'includes/footer.php'; ?>
