@@ -3,7 +3,7 @@ include('conexao.php');
 
 $pageTitle = 'Listar Clientes';
 $currentPage = 'listar';
-$pageDescription = 'Visualize todos os clientes e verifique quais podem ser excluídos';
+$pageDescription = 'Visualize todos os clientes cadastrados no sistema';
 
 $sql = "SELECT c.id_cliente, c.nome, c.telefone, c.email,
                COUNT(p.id_pedido) AS total_pedidos
@@ -25,6 +25,10 @@ include 'includes/header.php';
     </div>
 </div>
 
+<?php if (isset($_GET['msg']) && $_GET['msg'] === 'excluido'): ?>
+    <div class="alert alert-success">Cliente excluído com sucesso!</div>
+<?php endif; ?>
+
 <div class="card">
     <div class="table-wrapper">
         <table class="table">
@@ -35,7 +39,7 @@ include 'includes/header.php';
                     <th>Telefone</th>
                     <th>E-mail</th>
                     <th>Pedidos</th>
-                    <th>Pode excluir?</th>
+                    <th class="th-acoes">Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -48,12 +52,13 @@ include 'includes/header.php';
                     <td>
                         <span class="badge badge-neutral"><?= $linha['total_pedidos'] ?></span>
                     </td>
-                    <td>
-                        <?php if ($linha['total_pedidos'] == 0): ?>
-                            <span class="badge badge-success">Sim</span>
-                        <?php else: ?>
-                            <span class="badge badge-error">Não (tem pedidos)</span>
-                        <?php endif; ?>
+                    <td class="td-acoes">
+                        <form method="POST" action="excluir.php" class="form-excluir-inline"
+                              onsubmit="return confirmarExclusao(<?= (int) $linha['total_pedidos'] ?>)">
+                            <input type="hidden" name="id" value="<?= (int) $linha['id_cliente'] ?>">
+                            <input type="hidden" name="redirect" value="listar.php">
+                            <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                        </form>
                     </td>
                 </tr>
             <?php endwhile; ?>
@@ -61,5 +66,21 @@ include 'includes/header.php';
         </table>
     </div>
 </div>
+
+<style>
+.th-acoes { text-align: right; width: 1%; white-space: nowrap; }
+.td-acoes { text-align: right; }
+.form-excluir-inline { display: inline; margin: 0; }
+.btn-sm { padding: 0.375rem 0.625rem; font-size: 0.8125rem; }
+</style>
+
+<script>
+function confirmarExclusao(totalPedidos) {
+    if (totalPedidos > 0) {
+        return confirm('Ao excluir perderá os dados de compra do cliente. Deseja continuar?');
+    }
+    return confirm('Deseja excluir este cliente?');
+}
+</script>
 
 <?php include 'includes/footer.php'; ?>
